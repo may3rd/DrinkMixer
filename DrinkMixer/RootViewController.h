@@ -8,6 +8,15 @@
 
 #import <UIKit/UIKit.h>
 
-@interface RootViewController : UITableViewController
+@interface RootViewController : UITableViewController {
+    
+    NSMutableArray* drinks;
+    IBOutlet UIBarButtonItem *addButtonItem;
+}
+
+@property (nonatomic, retain) NSMutableArray* drinks;
+@property (nonatomic, retain) UIBarButtonItem *addButtonItem;
+
+-(IBAction) addButtonPress: (id) sender;
 
 @end

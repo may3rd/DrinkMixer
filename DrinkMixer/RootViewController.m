@@ -7,13 +7,29 @@
 //
 
 #import "RootViewController.h"
+#import "DrinkDetailViewController.h"
+#import "addDrinkViewController.h"
 
 @implementation RootViewController
 
+@synthesize drinks, addButtonItem;
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    // Ask the app bundle for a path to our DrinkDirections.plist
+    
+    NSString *path = [[NSBundle mainBundle] pathForResource:@"DrinkDirections" ofType:@"plist"];
+    NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile:path];
+    
+    // get the Root object
+    NSMutableArray *tmpArray = [dict objectForKey:@"Root"];
+    
+    self.drinks = tmpArray;
+    
+    // add new Button item to rightBarButtonItem
+    self.navigationItem.rightBarButtonItem = self.addButtonItem;
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -52,7 +68,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return 0;
+    return [self.drinks count];
 }
 
 // Customize the appearance of table view cells.
@@ -66,6 +82,15 @@
     }
 
     // Configure the cell.
+    
+    NSDictionary *tmpDict = [self.drinks objectAtIndex:indexPath.row];
+    NSString *cellValue = [tmpDict objectForKey:@"name"];
+    //NSLog(@"++%@",cellValue);
+    
+    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    
+    cell.textLabel.text = cellValue;
+    
     return cell;
 }
 
@@ -119,6 +144,13 @@
     [self.navigationController pushViewController:detailViewController animated:YES];
     [detailViewController release];
 	*/
+    
+    DrinkDetailViewController *drinkDetailViewController = [[DrinkDetailViewController alloc] initWithNibName:@"DrinkDetailViewController" bundle:nil];
+    drinkDetailViewController.drink = [self.drinks objectAtIndex:indexPath.row];
+
+    [self.navigationController pushViewController:drinkDetailViewController animated:YES];
+    
+    [drinkDetailViewController release];
 }
 
 - (void)didReceiveMemoryWarning
@@ -137,8 +169,23 @@
     // For example: self.myOutlet = nil;
 }
 
+-(IBAction) addButtonPress:(id)sender {
+    //NSLog(@"Add button press");
+    
+    addDrinkViewController *addDrinkVC = [[addDrinkViewController alloc] initWithNibName:@"DrinkDetailViewController" bundle:nil];
+    
+    UINavigationController *addNavCon = [[UINavigationController alloc] initWithRootViewController:addDrinkVC];
+    
+    [self presentModalViewController:addNavCon animated:YES];
+    
+    [addNavCon release];
+    [addDrinkVC release];
+}
+
 - (void)dealloc
 {
+    [drinks release];
+    [addButtonItem release];
     [super dealloc];
 }
 
